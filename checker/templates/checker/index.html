@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ScamScan | Check a job ad</title>
+<meta name="description" content="Paste a job ad to see its risk level, the specific red flags, and a message you can send to ask the employer for the details a real one would give.">
+<style nonce="{{ csp_nonce }}">
+  :root {
+    --bg: #f6f7f9; --card: #ffffff; --text: #17202e; --muted: #4d5a6e; --line: #d7dde6;
+    --brand: #1f4fbf; --brand-text: #ffffff;
+    --low: #146c3e; --low-bg: #e4f5ec; --med: #8a4b00; --med-bg: #fdf0d9; --high: #a81c12; --high-bg: #fde8e6;
+    --pos: #146c3e;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #11151c; --card: #1a202b; --text: #eef1f6; --muted: #a9b3c4; --line: #2b3444;
+      --brand: #7ea6ff; --brand-text: #0c1220;
+      --low: #6fe0a2; --low-bg: #12301f; --med: #ffc46b; --med-bg: #35260b; --high: #ff9a91; --high-bg: #3a1411;
+      --pos: #6fe0a2;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 24px 16px 48px; }
+  a { color: var(--brand); }
+  h1 { font-size: clamp(1.7rem, 5vw, 2.3rem); margin: 8px 0 6px; line-height: 1.15; }
+  h2 { font-size: 1.15rem; margin: 0 0 8px; }
+  h2.gap { margin-top: 18px; }
+  .lead { color: var(--muted); margin: 0 0 20px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 20px; margin-bottom: 16px; }
+  label { display: block; font-weight: 600; margin-bottom: 6px; }
+  textarea { width: 100%; min-height: 220px; resize: vertical; padding: 12px; font: inherit; color: var(--text);
+    background: var(--bg); border: 1.5px solid var(--line); border-radius: 10px; }
+  textarea:focus-visible, button:focus-visible, a:focus-visible { outline: 3px solid var(--brand); outline-offset: 2px; }
+  .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; margin-top: 10px; }
+  .count { color: var(--muted); font-size: .9rem; }
+  .count.over { color: var(--high); font-weight: 700; }
+  .actions { display: flex; flex-wrap: wrap; gap: 10px; }
+  button { font: inherit; font-weight: 700; padding: 11px 20px; border-radius: 10px; cursor: pointer; border: 1.5px solid var(--brand);
+    background: var(--brand); color: var(--brand-text); }
+  button.secondary { background: transparent; color: var(--brand); }
+  button:hover { filter: brightness(1.08); }
+  .error { background: var(--high-bg); color: var(--high); border: 1.5px solid var(--high); border-radius: 10px; padding: 12px 14px; margin-bottom: 14px; font-weight: 600; }
+
+  .badge { display: inline-flex; align-items: center; gap: 10px; padding: 10px 16px; border-radius: 12px; font-weight: 800; font-size: 1.15rem; border: 2px solid; }
+  .badge small { font-weight: 600; font-size: .95rem; }
+  .badge.low { color: var(--low); background: var(--low-bg); border-color: var(--low); }
+  .badge.medium { color: var(--med); background: var(--med-bg); border-color: var(--med); }
+  .badge.high { color: var(--high); background: var(--high-bg); border-color: var(--high); }
+  ul.list { margin: 0; padding: 0; list-style: none; display: grid; gap: 10px; }
+  ul.list li { border-left: 4px solid var(--line); padding: 2px 0 2px 12px; }
+  ul.flags li { border-left-color: var(--high); }
+  ul.pos li { border-left-color: var(--pos); }
+  ul.list strong { display: block; }
+  ul.list span { color: var(--muted); font-size: .94rem; }
+  .reply { min-height: 220px; font-size: .95rem; }
+  .privacy { color: var(--muted); font-size: .9rem; }
+  .meta { color: var(--muted); font-size: .85rem; margin: 10px 0 0; }
+  footer { color: var(--muted); font-size: .88rem; margin-top: 24px; border-top: 1px solid var(--line); padding-top: 16px; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>ScamScan</h1>
+    <p class="lead">Paste a job ad to see how risky it looks, why, and a message you can send to ask the employer for the details a real one would give.</p>
+  </header>
+
+  <main>
+    <form method="post" class="card" id="check-form">
+      {% csrf_token %}
+      <label for="ad">Job ad text</label>
+      {% if error %}<div class="error" role="alert">{{ error }}</div>{% endif %}
+      <textarea id="ad" name="ad" aria-describedby="ad-help ad-count" placeholder="Paste the full job ad here, including any email, link or phone number in it.">{{ text }}</textarea>
+      <div class="row">
+        <span class="count" id="ad-count" aria-live="polite"><span id="ad-n">{{ text|length }}</span> / {{ max_chars }} characters</span>
+        <div class="actions">
+          <button type="button" class="secondary" id="example">Try an example</button>
+          <button type="submit">Analyze</button>
+        </div>
+      </div>
+      <p class="privacy" id="ad-help">Your ad is checked in memory and is not stored. Emails, links and phone numbers are removed before any text is sent to an AI service.</p>
+    </form>
+
+    {% if result %}
+    <section class="card" aria-labelledby="result-h" id="result">
+      <h2 id="result-h" class="sr">Result</h2>
+      <p class="badge {{ result.level }}">
+        <span>Risk: {{ result.level|upper }}</span>
+        <small>{{ result.score }} / 100</small>
+      </p>
+      <p>{{ result.summary }}</p>
+
+      <h2>Red flags</h2>
+      {% if result.flags %}
+      <ul class="list flags">
+        {% for flag in result.flags %}
+        <li><strong>{{ flag.label }}</strong><span>{{ flag.detail }}</span></li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <p class="privacy">No red flags were found. That does not prove the ad is genuine, so still verify the employer.</p>
+      {% endif %}
+
+      {% if result.positives %}
+      <h2 class="gap">Reassuring signs</h2>
+      <ul class="list pos">
+        {% for item in result.positives %}<li><strong>{{ item.label }}</strong></li>{% endfor %}
+      </ul>
+      {% endif %}
+
+      <p class="meta">
+        {% if result.model_prob is not None %}Scored with rule checks and a text classifier.{% else %}Scored with rule checks only (no classifier model was found).{% endif %}
+      </p>
+    </section>
+
+    <section class="card" aria-labelledby="reply-h">
+      <h2 id="reply-h">Message you can send</h2>
+      <label for="reply" class="sr">Suggested reply</label>
+      <textarea id="reply" class="reply" readonly>{{ result.reply_template }}</textarea>
+      <div class="row">
+        <span class="count" id="copy-status" role="status" aria-live="polite"></span>
+        <button type="button" id="copy">Copy message</button>
+      </div>
+    </section>
+    {% endif %}
+  </main>
+
+  <footer>
+    ScamScan shows a <strong>risk indicator and reasons</strong>. It is not a verdict, and a genuine employer can occasionally be flagged. Always verify an employer yourself and never pay to get a job.
+  </footer>
+</div>
+
+<script nonce="{{ csp_nonce }}">
+  (function () {
+    var max = {{ max_chars }};
+    var ad = document.getElementById("ad");
+    var n = document.getElementById("ad-n");
+    var count = document.getElementById("ad-count");
+    function update() {
+      n.textContent = ad.value.length;
+      count.classList.toggle("over", ad.value.length > max);
+    }
+    ad.addEventListener("input", update);
+    update();
+
+    document.getElementById("example").addEventListener("click", function () {
+      ad.value = "URGENT HIRING in Dubai! Earn AED 800 per day, no interview needed. " +
+        "Pay a registration fee of AED 450 to confirm your visa slot. " +
+        "Send your passport copy on WhatsApp to +971 50 000 0000. Limited seats!";
+      update();
+      ad.focus();
+    });
+
+    var copy = document.getElementById("copy");
+    if (copy) {
+      copy.addEventListener("click", function () {
+        var box = document.getElementById("reply");
+        var status = document.getElementById("copy-status");
+        function done(ok) { status.textContent = ok ? "Copied." : "Press Ctrl+C to copy the selected text."; }
+        box.select();
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(box.value).then(function () { done(true); }, function () { done(false); });
+        } else {
+          done(false);
+        }
+      });
+      var result = document.getElementById("result");
+      if (result) { result.scrollIntoView({ behavior: "smooth", block: "start" }); }
+    }
+  })();
+</script>
+</body>
+</html>

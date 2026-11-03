@@ -1,0 +1,3 @@
+# Extra packages needed only to retrain and evaluate the model (train.py).
+-r requirements.txt
+pandas==3.0.6

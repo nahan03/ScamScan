@@ -1,0 +1,9 @@
+# Runtime dependencies for the web app and the command-line tool (pinned for reproducibility, NFR-4).
+# The saved model must be loaded with the same scikit-learn version that trained it.
+Django==6.1.2
+scikit-learn==1.9.1
+numpy==2.5.4
+scipy==1.18.1
+joblib==1.6.0
+anthropic==1.17.0
+gunicorn==26.2.0

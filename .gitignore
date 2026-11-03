@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+*.egg-info/
+.coverage
+.ruff_cache/
+
+# Secrets and local data
+.env
+db.sqlite3
+data/*.csv
+!data/*.template.csv
+archive/
+archive.zip
+
+# The trained model is small (about 8 MB) and is committed so the deployed app can load it.
+# Only load model files you trained yourself: joblib files can run code when loaded.
+!models/job_scam_model.joblib
+
+# Editors and OS
+.vscode/
+.idea/
+.DS_Store

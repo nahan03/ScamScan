@@ -1,0 +1,20 @@
+# Render Blueprint: deploys the Django app as a free web service.
+# Dashboard steps are in README.md. The model file (models/job_scam_model.joblib) is committed
+# to the repository, so the build does not need the training dataset.
+services:
+  - type: web
+    name: scamscan
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn webapp.wsgi:application --bind 0.0.0.0:$PORT --workers 1 --timeout 30
+    healthCheckPath: /healthz
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.8
+      - key: DJANGO_DEBUG
+        value: "0"
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: ANTHROPIC_API_KEY
+        sync: false # optional: add it in the dashboard to enable the Claude explanation
