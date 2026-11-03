@@ -2,6 +2,8 @@
 
 Paste a job ad and get a **risk level**, the **specific red flags** found, and a **ready-to-send message** asking the poster for the details a real employer would give.
 
+**Live demo: https://scamscan-q2m9.onrender.com** (free hosting, so the first visit after a quiet spell can take a minute to wake up. Please use made-up or anonymised ads.)
+
 > ScamScan shows a **risk indicator and reasons**. It is not a verdict, a genuine employer can occasionally be flagged, and it never stores the ads you paste.
 
 <table>

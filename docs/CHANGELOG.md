@@ -26,5 +26,8 @@ Built milestones M1 to M6 of [SDLC-plan.md](SDLC-plan.md).
 ### Not done yet
 
 - The hand-labelled UAE-style set (30 or more ads). It needs your own labels; the tooling is ready (`eval_uae.py`).
-- A live demo link. Deployment config is ready but has not been run on Render.
 - Optional "was this right?" feedback button (a "Could" item).
+
+### Deployed (2026-11-03)
+
+Live on Render's free plan at https://scamscan-q2m9.onrender.com, built from commit `be8c6d5`. Checked on the live site: the page loads over HTTPS (HTTP redirects), the security headers are sent, the classifier loaded (so a model saved under Python 3.13 loads on Render's 3.12), a made-up scam ad scores high and a made-up genuine ad scores low, empty input returns a clear error, and a post without a CSRF token is refused. Steady-state analysis takes about 0.4 s. The first request after the service starts took about 6 s because the model loads then.
