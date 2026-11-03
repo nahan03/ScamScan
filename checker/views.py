@@ -7,12 +7,13 @@ from django.shortcuts import render
 from django.views.decorators.http import require_http_methods
 
 from scamscan.constants import MAX_CHARS
+from scamscan.explain import ACCURACY_NOTE
 from scamscan.scorer import analyze, default_classifier
 
 
 @require_http_methods(["GET", "HEAD", "POST"])
 def index(request):
-    context = {"max_chars": MAX_CHARS, "text": ""}
+    context = {"max_chars": MAX_CHARS, "text": "", "accuracy_note": ACCURACY_NOTE}
     status = 200
     if request.method == "POST":
         text = request.POST.get("ad", "")

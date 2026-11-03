@@ -6,7 +6,10 @@ from scamscan.scorer import analyze, validate
 
 from . import samples
 
-EXPECTED_KEYS = {"level", "score", "flags", "positives", "model_prob", "summary", "reply_template"}
+EXPECTED_KEYS = {
+    "level", "score", "flags", "positives", "model_prob", "summary", "reply_template",
+    "caveat", "verify_steps",
+}
 
 
 class FakeModel:
@@ -88,6 +91,24 @@ class AnalyzeTests(unittest.TestCase):
     def test_reply_template_adapts_to_the_flags(self):
         self.assertIn("own domain", analyze(samples.VAGUE_FREE_EMAIL)["reply_template"])
         self.assertNotIn("own domain", analyze(samples.LEGIT_DETAILED)["reply_template"])
+
+
+class CaveatTests(unittest.TestCase):
+    def test_every_level_carries_a_caveat_and_the_verify_steps(self):
+        for text, model in ((samples.LEGIT_DETAILED, 0.05), (samples.VAGUE_FREE_EMAIL, 0.2), (samples.SCAM_FEE, 0.9)):
+            result = analyze(text, classifier=FakeModel(model))
+            self.assertTrue(result["caveat"])
+            self.assertGreaterEqual(len(result["verify_steps"]), 5)
+
+    def test_a_low_result_never_reads_as_safe(self):
+        result = analyze(samples.LEGIT_DETAILED, classifier=FakeModel(0.05))
+        self.assertEqual(result["level"], "low")
+        self.assertIn("does not mean safe", result["caveat"])
+
+    def test_a_high_result_is_not_called_proof(self):
+        result = analyze(samples.SCAM_FEE)
+        self.assertEqual(result["level"], "high")
+        self.assertIn("not proof", result["caveat"])
 
 
 if __name__ == "__main__":

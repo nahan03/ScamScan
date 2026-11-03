@@ -14,13 +14,18 @@ import json
 import os
 import sys
 
+from scamscan.explain import ACCURACY_NOTE
 from scamscan.scorer import analyze, default_classifier
 
 DISCLAIMER = "ScamScan shows a risk indicator and reasons. It is not a verdict."
 
 
 def format_result(result: dict) -> str:
-    lines = [f"Risk level: {result['level'].upper()}  (score {result['score']}/100)", ""]
+    lines = [
+        f"Risk level: {result['level'].upper()}  (score {result['score']}/100)",
+        f"NOT 100% ACCURATE. {result['caveat']}",
+        "",
+    ]
     if result["flags"]:
         lines.append("Red flags:")
         lines += [f"  - {f['label']}: {f['detail']}" for f in result["flags"]]
@@ -28,9 +33,12 @@ def format_result(result: dict) -> str:
         lines.append("Red flags: none found")
     if result["positives"]:
         lines += ["", "Reassuring signs:"] + [f"  + {p['label']}" for p in result["positives"]]
-    lines += ["", "Explanation:", f"  {result['summary']}", "", "Suggested reply:"]
+    lines += ["", "Explanation:", f"  {result['summary']}"]
+    lines += ["", "Before you reply, verify the employer:"]
+    lines += [f"  {number}. {step}" for number, step in enumerate(result["verify_steps"], 1)]
+    lines += ["", "Suggested reply:"]
     lines += [f"  {line}" for line in result["reply_template"].splitlines()]
-    lines += ["", DISCLAIMER]
+    lines += ["", f"{DISCLAIMER} {ACCURACY_NOTE}"]
     return "\n".join(lines)
 
 

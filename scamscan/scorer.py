@@ -6,7 +6,7 @@ from functools import lru_cache
 
 from .combine import combine
 from .constants import MAX_CHARS, MODEL_PATH
-from .explain import fallback_summary, llm_summary, redact, reply_template
+from .explain import VERIFY_STEPS, caveat, fallback_summary, llm_summary, redact, reply_template
 from .model import load_model, predict_proba
 from .rules import analyze_rules
 
@@ -29,8 +29,9 @@ def validate(text: str) -> str:
 def analyze(text: str, classifier=None, use_llm: bool = False, client=None) -> dict:
     """Analyze one job ad. The ad text is never stored or logged.
 
-    Returns level, score (0-100), flags, positives, model_prob (or None), summary
-    and reply_template.
+    Returns level, score (0-100), flags, positives, model_prob (or None), summary,
+    reply_template, caveat (what this level does and does not mean) and verify_steps
+    (checks that catch what the ad text cannot).
     """
     text = validate(text)
     rules = analyze_rules(text)
@@ -51,4 +52,6 @@ def analyze(text: str, classifier=None, use_llm: bool = False, client=None) -> d
         "model_prob": None if model_prob is None else round(model_prob, 3),
         "summary": summary,
         "reply_template": reply_template(rules.codes),
+        "caveat": caveat(level),
+        "verify_steps": list(VERIFY_STEPS),
     }

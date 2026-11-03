@@ -50,6 +50,24 @@ class PageTests(SimpleTestCase):
         self.assertIn("Risk: LOW", html)
         self.assertIn("Reassuring signs", html)
 
+    def test_form_page_warns_that_results_are_not_100_percent_accurate(self):
+        html = self.client.get("/").content.decode()
+        self.assertIn("Not 100% accurate.", html)
+        self.assertIn("miss scams", html)
+
+    def test_every_result_level_shows_a_caveat_and_the_verify_checklist(self):
+        for ad, level in ((samples.LEGIT_DETAILED, "LOW"), (samples.SCAM_FEE, "HIGH")):
+            html = self.client.post("/", {"ad": ad}).content.decode()
+            self.assertIn(f"Risk: {level}", html)
+            self.assertIn('class="caveat', html)
+            self.assertIn("Not 100% accurate.", html)
+            self.assertIn("Before you reply: verify the employer", html)
+            self.assertIn("Search the company name", html)
+
+    def test_low_result_says_low_risk_does_not_mean_safe(self):
+        html = self.client.post("/", {"ad": samples.LEGIT_DETAILED}).content.decode()
+        self.assertIn("Low risk does not mean safe", html)
+
     def test_empty_input_shows_a_clear_error(self):
         for body in ("", "   \n  "):
             response = self.client.post("/", {"ad": body})

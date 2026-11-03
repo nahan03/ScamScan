@@ -28,6 +28,61 @@ LEVEL_INTRO = {
     "low": "This ad shows few warning signs.",
 }
 
+# Shown after the words "Not 100% accurate." on the page and in the command-line tool.
+ACCURACY_NOTE = (
+    "ScamScan can miss scams, especially professional-looking ones, "
+    "and it can wrongly flag genuine ads. Use it as a second opinion, not as proof."
+)
+
+# What each level does and does not mean. A low result must never read as "safe".
+CAVEATS = {
+    "low": (
+        "Low risk does not mean safe. ScamScan only reads the text of the ad. Many scams look "
+        "professional and are only exposed when you check the company itself, so please still "
+        "verify the employer before you reply."
+    ),
+    "medium": (
+        "ScamScan found some warning signs, but it can be wrong in both directions. Treat this as "
+        "a reason to check the employer, not as proof either way."
+    ),
+    "high": (
+        "ScamScan found serious warning signs, but this is not proof that the poster is a scammer, "
+        "and genuine employers are sometimes flagged. Verify the employer before you decide."
+    ),
+}
+
+# These catch what the text of an ad cannot, so they are shown with every result.
+VERIFY_STEPS = (
+    'Search the company name together with the words "scam", "fraud" and "reviews".',
+    (
+        "Find the company's official website and careers page yourself, without using links from "
+        "the ad, and check that this job is listed there."
+    ),
+    (
+        "Check that the contact email uses the company's own website domain. Watch for look-alike "
+        "domains and free email addresses."
+    ),
+    (
+        "Check that the company is registered. In India, search the Ministry of Corporate Affairs "
+        "company register. In the UAE, ask for the trade licence number and check it with the "
+        "licensing authority."
+    ),
+    (
+        'Never pay any money, even a "refundable" deposit, and do not share bank, card or '
+        "one-time-password details or ID copies until you have verified the employer and have a "
+        "written offer."
+    ),
+    (
+        "If you are still unsure, ask someone you trust. You can report suspicious offers to the "
+        "police (in India, the national cybercrime reporting portal at cybercrime.gov.in)."
+    ),
+)
+
+
+def caveat(level: str) -> str:
+    """The plain-English limit of a result at this level."""
+    return CAVEATS[level]
+
 
 def redact(text: str) -> str:
     """Remove emails, links and phone numbers so they never reach an external service."""

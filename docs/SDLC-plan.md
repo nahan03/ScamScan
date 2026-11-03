@@ -113,7 +113,7 @@ flowchart LR
 
 ### 2.4 Interface contract
 `analyze(text, classifier=None, use_llm=False)` returns a dictionary:
-`level`, `score` (0-100), `flags` (label, detail), `positives`, `model_prob` (or `None`), `summary`, `reply_template`.
+`level`, `score` (0-100), `flags` (label, detail), `positives`, `model_prob` (or `None`), `summary`, `reply_template`, and from v0.1.1 `caveat` (what the level does and does not mean) and `verify_steps` (checks that catch what the ad text cannot).
 
 ### 2.5 Data design
 - Training data: the public CSV. Text is built from title, company profile, description, requirements and benefits; the label is `fraudulent`.

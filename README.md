@@ -27,6 +27,7 @@ The screenshots are of the real running app, checking made-up ads.
 2. **A text classifier** (TF-IDF + calibrated logistic regression) trained on a public job-posting dataset gives a fraud probability.
 3. **A combined score** (30% rules, 70% classifier) gives a 0-100 score and a low, medium or high level. A fee request, or a request for bank, card or OTP details, always forces **high**.
 4. **An explanation** in plain English, optionally written by the Claude API. A reply message adapts to the flags found.
+5. **Honest limits on every result.** The page and the command-line tool say "Not 100% accurate", explain what the level does and does not mean (a low result "does not mean safe"), and list checks to verify the employer.
 
 Results on held-out data, known failure cases and the honest limits are in [docs/evaluation.md](docs/evaluation.md). The requirements, design and test plan are in [docs/SDLC-plan.md](docs/SDLC-plan.md).
 
@@ -116,7 +117,7 @@ To roll back, redeploy an earlier tagged commit. Check the Python version in `re
 
 ## Limits
 
-English only. The classifier was trained on a mostly non-UAE dataset, so on UAE-style ads the rules carry more of the weight than the numbers suggest. The rules and thresholds are judgement calls that need checking against real UAE-style ads. Rule checks use fixed phrasings and can miss new wording. It cannot tell you an employer is genuine, only what looks risky.
+English only. The classifier was trained on a mostly non-UAE dataset, so on UAE-style ads the rules carry more of the weight than the numbers suggest. The rules and thresholds are judgement calls that need checking against real UAE-style ads. Rule checks use fixed phrasings and can miss new wording. It cannot tell you an employer is genuine, only what looks risky. In particular, **a professional-looking fake ad with nothing suspicious in its text scores low**, because ScamScan reads only the text and cannot see whether the company really exists. That is why every result carries a "verify the employer" checklist.
 
 ## Credits
 

@@ -1,9 +1,14 @@
 import os
+import re
 import unittest
 from unittest import mock
 
 from scamscan.explain import (
+    ACCURACY_NOTE,
+    CAVEATS,
+    VERIFY_STEPS,
     build_messages,
+    caveat,
     fallback_summary,
     llm_summary,
     redact,
@@ -125,6 +130,33 @@ class LlmTests(unittest.TestCase):
     def test_overlong_output_is_trimmed(self):
         out = llm_summary("ad", "high", [], client=FakeClient("x" * 5000))
         self.assertLessEqual(len(out), 1200)
+
+
+class CaveatWordingTests(unittest.TestCase):
+    def test_there_is_a_caveat_for_every_level(self):
+        self.assertEqual(set(CAVEATS), {"low", "medium", "high"})
+        for level in CAVEATS:
+            self.assertEqual(caveat(level), CAVEATS[level])
+
+    def test_low_says_it_is_not_safe_and_high_says_it_is_not_proof(self):
+        self.assertIn("does not mean safe", CAVEATS["low"])
+        self.assertIn("not proof", CAVEATS["high"])
+        self.assertIn("wrong in both directions", CAVEATS["medium"])
+
+    def test_no_caveat_ever_promises_certainty(self):
+        for text in (*CAVEATS.values(), ACCURACY_NOTE):
+            self.assertNotIn("100% safe", text)
+            # "is a scammer" appears in the negated "not proof that the poster is a scammer"
+            self.assertIsNone(re.search(r"\bis a scam\b", text))
+
+    def test_accuracy_note_admits_both_kinds_of_mistake(self):
+        self.assertIn("miss scams", ACCURACY_NOTE)
+        self.assertIn("wrongly flag genuine", ACCURACY_NOTE)
+
+    def test_checklist_covers_the_checks_the_ad_text_cannot_do(self):
+        text = " ".join(VERIFY_STEPS).lower()
+        for expected in ("search the company name", "official website", "domain", "registered", "never pay"):
+            self.assertIn(expected, text)
 
 
 if __name__ == "__main__":

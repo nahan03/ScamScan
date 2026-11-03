@@ -57,6 +57,14 @@
   .reply { min-height: 220px; font-size: .95rem; }
   .privacy { color: var(--muted); font-size: .9rem; }
   .meta { color: var(--muted); font-size: .85rem; margin: 10px 0 0; }
+  .notice, .caveat { border-left: 5px solid var(--brand); background: var(--card); border-radius: 10px; padding: 12px 14px;
+    margin: 0 0 18px; font-size: .95rem; border-top: 1px solid var(--line); border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .caveat { margin: 14px 0; background: var(--bg); }
+  .caveat.low { border-left-color: var(--med); }
+  .caveat.medium { border-left-color: var(--med); }
+  .caveat.high { border-left-color: var(--high); }
+  ol.verify { margin: 10px 0 0; padding-left: 22px; display: grid; gap: 8px; }
+  ol.verify li { padding-left: 4px; }
   footer { color: var(--muted); font-size: .88rem; margin-top: 24px; border-top: 1px solid var(--line); padding-top: 16px; }
   .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 </style>
@@ -66,6 +74,7 @@
   <header>
     <h1>ScamScan</h1>
     <p class="lead">Paste a job ad to see how risky it looks, why, and a message you can send to ask the employer for the details a real one would give.</p>
+    <p class="notice" role="note"><strong>Not 100% accurate.</strong> {{ accuracy_note }}</p>
   </header>
 
   <main>
@@ -91,6 +100,7 @@
         <span>Risk: {{ result.level|upper }}</span>
         <small>{{ result.score }} / 100</small>
       </p>
+      <p class="caveat {{ result.level }}" role="note"><strong>Not 100% accurate.</strong> {{ result.caveat }}</p>
       <p>{{ result.summary }}</p>
 
       <h2>Red flags</h2>
@@ -114,6 +124,14 @@
       <p class="meta">
         {% if result.model_prob is not None %}Scored with rule checks and a text classifier.{% else %}Scored with rule checks only (no classifier model was found).{% endif %}
       </p>
+    </section>
+
+    <section class="card" aria-labelledby="verify-h" id="verify">
+      <h2 id="verify-h">Before you reply: verify the employer</h2>
+      <p class="privacy">These checks catch what the text of an ad cannot. Many scams look professional and are only exposed by checking the company itself.</p>
+      <ol class="verify">
+        {% for step in result.verify_steps %}<li>{{ step }}</li>{% endfor %}
+      </ol>
     </section>
 
     <section class="card" aria-labelledby="reply-h">

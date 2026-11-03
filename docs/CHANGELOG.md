@@ -2,6 +2,16 @@
 
 Semantic versioning. Dates are when the work was done.
 
+## 0.1.1 (2026-11-03) - Honest limits on every result
+
+- Every result now shows a "Not 100% accurate" note under the risk badge that says what the level does and does not mean. A low result says "Low risk does not mean safe".
+- Every result carries a "Before you reply: verify the employer" checklist (search the company name with "scam", check the official website and email domain, check the company is registered, never pay, report suspicious offers). These catch what the text of an ad cannot.
+- The form page warns that ScamScan can miss scams and can wrongly flag genuine ads. The command-line tool prints the same.
+- `analyze()` returns two new keys, `caveat` and `verify_steps`.
+- Added the professional-looking fake ad to the known failure cases in [evaluation.md](evaluation.md).
+
+Why: a made-up professional-looking fake ad with no warning sign in its text scored low (1/100). That is a limit of any text-only tool, so the tool now says so clearly instead of letting a low score read as "safe".
+
 ## 0.1.0 (2026-11-03) - MVP
 
 Built milestones M1 to M6 of [SDLC-plan.md](SDLC-plan.md).

@@ -40,6 +40,7 @@ The first two rows were observed by running the app on the made-up sample ads in
 
 | Case | What happens | Why |
 |---|---|---|
+| A professional-looking fake: a named company, a company-style email and website, real-sounding duties and salary, and no warning sign in the text | Scored **low** (1/100) on a made-up example. | ScamScan reads only the text. Whether the company really exists cannot be seen in the text. This is the hardest kind of scam, and the page now says "Low risk does not mean safe" and shows a verify-the-employer checklist with every result. |
 | An ad with no company name and no contact details but no other warning sign | Scored **low** (10/100). Rules alone would say medium (28). | The classifier gives it a very low probability and now carries 70% of the score. |
 | A UAE-style scam (fee request, passport and bank details by WhatsApp) | Classifier probability is only 0.36. The result is **high** only because the hard-flag rule forces it. | The classifier was trained on a different style of ad and does not recognise WhatsApp-style wording. |
 | A fee request phrased in a way the patterns do not cover | Not flagged as a hard flag. | The rules use a fixed list of phrasings plus a simple negation check ("no registration fee"). |

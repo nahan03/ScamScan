@@ -35,6 +35,13 @@ class CliTests(unittest.TestCase):
         self.assertIn("Suggested reply:", out)
         self.assertIn("not a verdict", out)
 
+    def test_output_warns_it_is_not_100_percent_accurate_and_lists_the_checks(self):
+        _, out, _ = run([self.write("ad.txt", samples.LEGIT_DETAILED), "--no-model"])
+        self.assertIn("NOT 100% ACCURATE", out)
+        self.assertIn("does not mean safe", out)
+        self.assertIn("Before you reply, verify the employer:", out)
+        self.assertIn("Search the company name", out)
+
     def test_json_output_is_valid(self):
         code, out, _ = run([self.write("ad.txt", samples.LEGIT_DETAILED), "--json", "--no-model"])
         self.assertEqual(code, 0)
