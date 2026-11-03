@@ -4,9 +4,18 @@ Paste a job ad and get a **risk level**, the **specific red flags** found, and a
 
 > ScamScan shows a **risk indicator and reasons**. It is not a verdict, a genuine employer can occasionally be flagged, and it never stores the ads you paste.
 
-| Form | Result | Phone, dark mode |
-|---|---|---|
-| ![The paste form](docs/screenshots/form-desktop.png) | ![A high-risk result](docs/screenshots/result-high-desktop.png) | ![A low-risk result on a phone](docs/screenshots/result-low-mobile-dark.png) |
+<table>
+  <tr>
+    <td valign="top" width="62%">
+      <img src="docs/screenshots/result-high-desktop.png" alt="The paste form and a high-risk result, with red flags and a message to send">
+      <br><sub>Desktop: paste an ad, get the level, the red flags and a message to send.</sub>
+    </td>
+    <td valign="top" width="38%">
+      <img src="docs/screenshots/result-low-mobile-dark.png" alt="A low-risk result on a phone in dark mode">
+      <br><sub>Phone, dark mode: a genuine-looking ad scores low.</sub>
+    </td>
+  </tr>
+</table>
 
 The screenshots are of the real running app, checking made-up ads.
 
